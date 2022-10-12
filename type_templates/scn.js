@@ -121,6 +121,8 @@ export default e => {
         }
       }));
     }
+
+    console.log('scene loaded:', srcUrl);
   })());
   
   useCleanup(() => {
