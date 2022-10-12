@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import fetch from 'node-fetch';
-import {fillTemplate, createRelativeFromAbsolutePath} from '../util.js';
+import {fillTemplate, createRelativeFromAbsolutePath, getCwd} from '../util.js';
 import metaversefileLoader from './metaversefile.js';
 
 const dirname = path.dirname(import.meta.url.replace(/^[a-z]+:\/\//, ''));
@@ -48,7 +48,7 @@ export default {
       }
     } else if (/^\//.test(id)) {
       // console.log('got pre id 1', {id});
-      const cwd = process.cwd();
+      const cwd = getCwd();
       id = path.resolve(id);
       const idFullPath = path.join(cwd, id);
       const isDirectory = await new Promise((accept, reject) => {
