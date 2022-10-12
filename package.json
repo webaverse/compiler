@@ -29,6 +29,8 @@
     "next": "12.3.1",
     "node-fetch": "^2.6.1",
     "pako": "^2.0.4",
+    "postcss": "^8.4.17",
+    "postcss-modules": "^5.0.0",
     "unix-path": "^0.2.0"
   },
   "devDependencies": {
