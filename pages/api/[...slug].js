@@ -7,13 +7,13 @@ import https from 'https';
 import {getCwd} from '../../util.js'
 import compile from '../../scripts/compile.js'
 
-const _proxy = (req, res, u) => new Promise((accept, reject) => {
+const _proxy = (req, res, u) => new Promise((resolve, reject) => {
   console.log('redirect asset 1', {u});
 
   // res.setHeader('Access-Control-Allow-Origin', '*');
   // res.redirect(u);
   // return;
-  
+
   if (/^\//.test(u)) {
     const cwd = getCwd();
     u = path.join(cwd, u);
@@ -40,13 +40,13 @@ const _proxy = (req, res, u) => new Promise((accept, reject) => {
       // res.setHeader('Access-Control-Allow-Origin', '*');
       res.statusCode = proxyRes.statusCode;
       proxyRes.pipe(res);
-      accept();
+      resolve();
     });
     proxyReq.on('error', err => {
       console.error(err);
       res.statusCode = 500;
       res.end();
-      accept();
+      resolve();
     });
     proxyReq.end();
   }
@@ -58,7 +58,7 @@ export default async function handler(req, res) {
   } */
   // console.log('got url', {u: req.url});
 
-  let u = req.url
+  const u = req.url
     .replace(/^\/([a-zA-Z0-9]+:)/, '$1')
     .replace(/^([a-zA-Z0-9]+:\/(?!\/))/, '$1/');
   if (u) {
@@ -87,4 +87,4 @@ export default async function handler(req, res) {
   } else {
     res.status(404).send('not found');
   }
-};
+}

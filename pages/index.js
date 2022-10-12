@@ -8,7 +8,7 @@ http://localhost:3000/https://webaverse.github.io/procgen-assets/avatars/male-pr
 export default function Home() {
   const [baseUrl, setBaseUrl] = useState('');
   useEffect(() => {
-    setBaseUrl(globalThis.location.href);
+    setBaseUrl(window.location.href);
   }, []);
 
   return (
