@@ -44,7 +44,7 @@ export const fetchFileFromId = async (id, importer, encoding = null) => {
     }
   } else {
     return await new Promise((accept, reject) => {
-      const cwd = process.cwd();
+      const cwd = getCwd();
       const p = path.join(cwd, id.replace(/^[\/\\]+/, ''));
       // console.log('read dir', {id, importer, p});
       fs.readFile(p, encoding, (err, d) => {
