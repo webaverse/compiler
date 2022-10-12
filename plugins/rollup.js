@@ -2,6 +2,9 @@ import path from 'path';
 import url from 'url';
 import fs from 'fs';
 import mimeTypes from 'mime-types';
+import {createHash} from 'crypto';
+import postcss from 'postcss';
+import cssModules from 'postcss-modules';
 import {contractNames} from '../constants.js';
 
 import cryptovoxels from '../contracts/cryptovoxels.js';
@@ -240,6 +243,82 @@ const mappedModules = {
   },
 };
 
+const readFile = async id => {
+  if (/^https?:\/\//.test(id)) {
+    const res = await fetch(id)
+    const text = await res.text();
+    return text;
+  } else {
+    // read from disk
+    const rs = fs.createReadStream(id);
+    const chunks = [];
+    for await (const chunk of rs) {
+      chunks.push(chunk);
+    }
+    return Buffer.concat(chunks).toString('utf8');
+  }
+};
+const buildCssModulesJs = async (css, cssFullPath, options = {}) => {
+  const {
+    localsConvention = 'camelCaseOnly',
+    inject = true,
+    generateScopedName,
+    cssModulesOption = {}
+  } = options;
+
+  // const css = await readFile(cssFullPath);
+
+  let cssModulesJSON = {};
+  const result = await postcss([
+    cssModules({
+      localsConvention,
+      generateScopedName,
+      getJSON(cssSourceFile, json) {
+        cssModulesJSON = { ...json };
+        return cssModulesJSON;
+      },
+      ...cssModulesOption
+    })
+  ]).process(css, {
+    from: cssFullPath,
+    map: false
+  });
+
+  const classNames = JSON.stringify(cssModulesJSON);
+  const hash = createHash('sha256');
+  hash.update(cssFullPath);
+  const digest = hash.digest('hex');
+
+  let injectedCode = '';
+  if (inject === true) {
+    injectedCode = `
+(function() {
+  if (typeof document === 'undefined') {
+    return;
+  }
+  if (!document.getElementById(digest)) {
+    var el = document.createElement('style');
+    el.id = digest;
+    el.textContent = css;
+    document.head.appendChild(el);
+  }
+})();
+    `;
+  } else if (typeof inject === 'function') {
+    injectedCode = inject(result.css, digest);
+  }
+
+  let jsContent = `
+const digest = '${digest}';
+const css = \`${result.css}\`;
+${injectedCode}
+export default ${classNames};
+export { css, digest };
+  `;
+
+  return jsContent;
+};
+
 export default function metaversefilePlugin() {
   return {
     name: 'metaversefile',
@@ -350,6 +429,14 @@ export default function metaversefilePlugin() {
     },
     async load(id) {
       // console.log('got load id', {id});
+
+      if (/\.css$/.test(id)) {
+        const css = await readFile(id);
+        const result = await buildCssModulesJs(css, id);
+        return {
+          code: result,
+        };
+      }
 
       let match;
       if (match = id.match(/^\/@map\/(.+)$/)) {
