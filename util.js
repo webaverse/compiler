@@ -65,10 +65,10 @@ export const fillTemplate = function(templateString, templateVars) {
 };
 
 export const createRelativeFromAbsolutePath = path => {
-  const cwd = process.cwd();
+  /* const cwd = process.cwd();
   if (path.startsWith(cwd.replaceAll('\\','/'))) {
     path = path.slice(cwd.length);
-  }
+  } */
   return path;
 }
 
