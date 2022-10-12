@@ -4,16 +4,12 @@ import {fillTemplate, parseIdHash} from '../util.js';
 
 const dirname = path.dirname(import.meta.url.replace(/^[a-z]+:\/\//, ''));
 const templateString = fs.readFileSync(path.join(dirname, '..', 'contract_templates', 'cryptovoxels.js'), 'utf8');
-// const cwd = process.cwd();
 
 export default {
   resolveId(source, importer) {
     return source;
-    /* console.log('cv resolve id', {source, importer});
-    return '/@proxy/' + source; */
   },
   load(id) {
-    // console.log('cv load id', {id});
     id = id
       .replace(/^(eth?:\/(?!\/))/, '$1/');
     
