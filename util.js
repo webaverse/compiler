@@ -25,6 +25,22 @@ export const resolveFileFromId = (id, importer) => {
 
 export const getCwd = () => path.resolve(process.cwd(), process.env.BASE_CWD ?? '');
 
+export const readFile = async id => {
+  if (/^https?:\/\//.test(id)) {
+    const res = await fetch(id)
+    const text = await res.text();
+    return text;
+  } else {
+    // read from disk
+    const rs = fs.createReadStream(id);
+    const chunks = [];
+    for await (const chunk of rs) {
+      chunks.push(chunk);
+    }
+    return Buffer.concat(chunks).toString('utf8');
+  }
+};
+
 export const fetchFileFromId = async (id, importer, encoding = null) => {
   id = id
   //  .replace(/^\/@proxy\//, '')
