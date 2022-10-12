@@ -23,6 +23,8 @@ export const resolveFileFromId = (id, importer) => {
   }
 };
 
+export const getCwd = () => path.resolve(process.cwd(), process.env.BASE_CWD ?? '');
+
 export const fetchFileFromId = async (id, importer, encoding = null) => {
   id = id
    .replace(/^\/@proxy\//, '')
