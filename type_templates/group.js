@@ -15,7 +15,7 @@ function getObjectUrl(object) {
     if (typeof content === 'object') {
       content = JSON.stringify(content);
     }
-    u = '/@proxy/data:' + type + ',' + encodeURI(content);
+    u = 'https://local-compiler.wevaverse.com/data:' + type + ',' + encodeURI(content);
   } else {
     throw new Error('invalid scene object: ' + JSON.stringify(object));
   }
@@ -70,9 +70,9 @@ export default e => {
         
         // console.log('group objects 2', u2);
         
-        if (/^https?:/.test(u2)) {
-          u2 = '/@proxy/' + u2;
-        }
+        // if (/^https?:/.test(u2)) {
+        //   u2 = '/@proxy/' + u2;
+        // }
         const m = await metaversefile.import(u2);
         // console.log('group objects 3', u2, m);
         const subApp = metaversefile.createApp({
