@@ -2,7 +2,7 @@
   "name": "webaverse-compiler",
   "version": "0.0.32",
   "description": "",
-  "main": "index.js",
+  "main": "next start",
   "type": "module",
   "scripts": {
     "dev": "BASE_CWD=../.. next dev",
