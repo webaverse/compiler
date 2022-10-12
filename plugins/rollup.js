@@ -39,7 +39,7 @@ import vircadia from '../types/vircadia.js';
 import directory from '../types/directory.js';
 
 import upath from 'unix-path';
-import {getCwd} from '../util.js';
+import {getCwd, readFile} from '../util.js';
 
 const contracts = {
   cryptovoxels,
@@ -243,21 +243,6 @@ const mappedModules = {
   },
 };
 
-const readFile = async id => {
-  if (/^https?:\/\//.test(id)) {
-    const res = await fetch(id)
-    const text = await res.text();
-    return text;
-  } else {
-    // read from disk
-    const rs = fs.createReadStream(id);
-    const chunks = [];
-    for await (const chunk of rs) {
-      chunks.push(chunk);
-    }
-    return Buffer.concat(chunks).toString('utf8');
-  }
-};
 const buildCssModulesJs = async (css, cssFullPath, options = {}) => {
   const {
     localsConvention = 'camelCaseOnly',
