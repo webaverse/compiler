@@ -16,8 +16,8 @@ export const resolveFileFromId = (id, importer) => {
   // console.log('load', id, match);
   if (match = id.match(/^ipfs:\/+([a-z0-9]+)((?:\/?[^\/\?]*)*)(\?\.(.+))?$/i)) {
     return `https://ipfs.webaverse.com/ipfs/${match[1]}${match[2]}`;
-  } else if (match = id.match(/^\/@proxy\/(.+)$/)) {
-    return match[1];
+  /* } else if (match = id.match(/^\/@proxy\/(.+)$/)) {
+    return match[1]; */
   } else {
     return null;
   }
@@ -27,8 +27,8 @@ export const getCwd = () => path.resolve(process.cwd(), process.env.BASE_CWD ?? 
 
 export const fetchFileFromId = async (id, importer, encoding = null) => {
   id = id
-   .replace(/^\/@proxy\//, '')
-   .replace(/^(https?:\/(?!\/))/, '$1/');
+  //  .replace(/^\/@proxy\//, '')
+  //  .replace(/^(https?:\/(?!\/))/, '$1/');
   if (/^https?:\/\//.test(id)) {
     const u = url.parse(id, true);
     u.query.noimport = 1 + '';
