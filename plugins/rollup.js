@@ -190,42 +190,6 @@ const mappedModules = {
       };
     },
   },
-  /* 'three/examples/jsm/utils/BufferGeometryUtils.js': {
-    resolveId(source, importer) {
-      return `/@map/${source}`;
-    },
-    load(id) {
-      return {
-        code: `
-          const {BufferGeometryUtils} = globalThis.Metaversefile.exports;
-          const {
-            computeTangents,
-            computeMikkTSpaceTangents,
-            mergeBufferGeometries,
-            mergeBufferAttributes,
-            interleaveAttributes,
-            estimateBytesUsed,
-            mergeVertices,
-            toTrianglesDrawMode,
-            computeMorphedAttributes,
-            mergeGroups,
-          } = BufferGeometryUtils;
-          export {
-            computeTangents,
-            computeMikkTSpaceTangents,
-            mergeBufferGeometries,
-            mergeBufferAttributes,
-            interleaveAttributes,
-            estimateBytesUsed,
-            mergeVertices,
-            toTrianglesDrawMode,
-            computeMorphedAttributes,
-            mergeGroups,
-          };
-        `,
-      };
-    },
-  }, */
   'react': {
     resolveId(source, importer) {
       // return source;
