@@ -3,13 +3,13 @@ import metaversefile from 'metaversefile';
 const {useApp, useFrame, useDomRenderer, useInternals, useWear, useCleanup} = metaversefile;
 
 let baseUrl = import.meta.url.replace(/(\\/)[^\\/\\\\]*$/, '$1');
-{
-  const bu = new URL(baseUrl);
-  const proxyPrefix ='/@proxy/';
-  if (bu.pathname.startsWith(proxyPrefix)) {
-    baseUrl = bu.pathname.slice(proxyPrefix.length) + bu.search + bu.hash;
-  }
-}
+// {
+//   const bu = new URL(baseUrl);
+//   const proxyPrefix ='/@proxy/';
+//   if (bu.pathname.startsWith(proxyPrefix)) {
+//     baseUrl = bu.pathname.slice(proxyPrefix.length) + bu.search + bu.hash;
+//   }
+// }
 
 export default e => {  
   const app = useApp();
@@ -35,9 +35,9 @@ export default e => {
     if (/^\\./.test(jsxUrl)) {
       jsxUrl = new URL(jsxUrl, baseUrl).href;
     }
-    if (/^https?:\\/\\//.test(jsxUrl) && !jsxUrl.startsWith(location.origin)) {
-      jsxUrl = '/@proxy/' + jsxUrl;
-    }
+    // if (/^https?:\\/\\//.test(jsxUrl) && !jsxUrl.startsWith(location.origin)) {
+    //   jsxUrl = '/@proxy/' + jsxUrl;
+    // }
     const m = await import(jsxUrl);
   
     dom = domRenderEngine.addDom({
