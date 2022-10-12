@@ -1,11 +1,11 @@
 {
-  "name": "metaversefile",
+  "name": "webaverse-compiler",
   "version": "0.0.32",
   "description": "",
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "next dev",
+    "dev": "BASE_CWD=../.. next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -25,11 +25,12 @@
     "@babel/preset-react": "^7.14.5",
     "data-urls": "^3.0.1",
     "esbuild": "^0.15.10",
+    "esbuild-css-modules-plugin": "^2.6.1-beta.1",
     "mime-types": "^2.1.32",
+    "next": "12.3.1",
     "node-fetch": "^2.6.1",
     "pako": "^2.0.4",
-    "unix-path": "^0.2.0",
-    "next": "12.3.1"
+    "unix-path": "^0.2.0"
   },
   "devDependencies": {
     "eslint": "8.25.0",
