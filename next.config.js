@@ -17,7 +17,7 @@ const securityHeaders = [
     key: 'Cross-Origin-Resource-Policy',
     value: 'cross-origin',
   },
-]
+];
 
 const nextConfig = {
   reactStrictMode: true,
