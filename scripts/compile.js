@@ -1,8 +1,6 @@
 import esbuild from 'esbuild';
 import metaversefilePlugin from '../plugins/rollup.js';
 
-// const testModuleUrl = `./metaverse_modules/target-reticle/`;
-
 const metaversefilePluginInstance = metaversefilePlugin();
 const metaversefilePluginProxy = {
   name: 'metaversefile',
@@ -29,12 +27,11 @@ async function compile(moduleUrl) {
     entryPoints: [
       moduleUrl,
     ],
-    // bundle: true,
-    // outfile: 'out.js',
+    bundle: true,
+    format: 'esm',
     plugins: [
       metaversefilePluginProxy,
     ],
-    // loader: { '.png': 'binary' },
     write: false,
     outdir: 'out',
   });
