@@ -1,28 +1,7 @@
 import * as THREE from 'three';
 import metaversefile from 'metaversefile';
-const {useApp, createApp, createAppAsync, addTrackedApp, removeTrackedApp, useCleanup} = metaversefile;
+const {useApp, createApp, getObjectUrl, createAppAsync, addTrackedApp, removeTrackedApp, useCleanup} = metaversefile;
 
-function typeContentToUrl(type, content) {
-  if (typeof content === 'object') {
-    content = JSON.stringify(content);
-  }
-  const dataUrlPrefix = 'data:' + type + ',';
-  return '/@proxy/' + dataUrlPrefix + encodeURIComponent(content).replace(/\%/g, '%25')//.replace(/\\//g, '%2F');
-}
-function getObjectUrl(object) {
-  let {start_url, type, content} = object;
-  
-  let u;
-  if (start_url) {
-    // make path relative to the .scn file
-    u = /^\\.\\//.test(start_url) ? (new URL(import.meta.url).pathname.replace(/(\\/)[^\\/]*$/, '$1') + start_url.replace(/^\\.\\//, '')) : start_url;
-  } else if (type && content) {
-    u = typeContentToUrl(type, content);
-  } else {
-    throw new Error('invalid scene object: ' + JSON.stringify(object));
-  }
-  return u;
-}
 function mergeComponents(a, b) {
   const result = a.map(({
     key,
@@ -136,7 +115,8 @@ export default e => {
           quaternion = new THREE.Quaternion().fromArray(quaternion);
           scale = new THREE.Vector3().fromArray(scale);
           
-          const url = getObjectUrl(object);
+          const baseUrl = import.meta.url;
+          const url = getObjectUrl(object, baseUrl);
           await loadApp(url, position, quaternion, scale, components);
         }
       }));
