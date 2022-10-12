@@ -4,19 +4,18 @@ import url from 'url';
 import Babel from '@babel/core';
 import fetch from 'node-fetch';
 import dataUrls from 'data-urls';
-import {parseIdHash} from '../util.js';
+import {parseIdHash, getCwd} from '../util.js';
 
 const textDecoder = new TextDecoder();
-const cwd = process.cwd();
 
 export default {
-  async resolveId(source, importer) {
+  /* async resolveId(source, importer) {
     if (/^\.\//.test(source) && /^data:/.test(importer)) {
       return path.join(cwd, source);
     } else {
       return undefined;
     }
-  },
+  }, */
   async load(id) {
     let src;
     if (/https?:/i.test(id)) {
@@ -35,7 +34,10 @@ export default {
         throw new Error('invalid data url');
       }
     } else {
-      const p = id.replace(/#[\s\S]+$/, '');
+      let p = '.' + id.replace(/#[\s\S]+$/, '');
+      const cwd = getCwd();
+      const oldP = p;
+      p = path.resolve(cwd, p);
       src = await fs.promises.readFile(p, 'utf8');
     }
 
