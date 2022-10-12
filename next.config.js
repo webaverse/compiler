@@ -22,6 +22,7 @@ const securityHeaders = [
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
+  nftTracing: true,
   trailingSlash: true,
   async headers() {
     return [
