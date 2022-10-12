@@ -38,10 +38,6 @@ export default {
               const o = url.parse(id, true);
               o.pathname = path.join(path.dirname(o.pathname), start_url);
               let s = url.format(o);
-              if (/^\//.test(s)) {
-                const cwd = process.cwd();
-                s = cwd + s;
-              }
               return s;
             } else {
               console.warn('.metaversefile scheme unknown');
