@@ -38,7 +38,7 @@ import group from '../types/group.js';
 import vircadia from '../types/vircadia.js';
 import directory from '../types/directory.js';
 
-import upath from 'unix-path';
+// import upath from 'unix-path';
 import {getCwd, readFile} from '../util.js';
 
 const contracts = {
