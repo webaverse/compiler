@@ -100,12 +100,12 @@ export default {
       throw new Error(`unknown path format: "${id}"`)
     }
   },
-  async load(id) {
+  /* async load(id) {
     if (id === '/@react-refresh') {
       return null;
     } else {
       id = id.replace(/^\/@proxy\//, '');
       return await _resolveHtml(id);
     }
-  }
+  } */
 };
