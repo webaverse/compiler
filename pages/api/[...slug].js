@@ -17,17 +17,17 @@ const _proxy = (req, res, u) => new Promise((resolve, reject) => {
   if (/^\//.test(u)) {
     const cwd = getCwd();
     u = path.join(cwd, u);
-    console.log('redirect asset 2', {
+    /* console.log('redirect asset 2', {
       u,
-    });
+    }); */
 
     const rs = fs.createReadStream(u);
     rs.pipe(res);
     rs.on('error', reject);
   } else {
-    console.log('redirect asset 3', {
+    /* console.log('redirect asset 3', {
       u,
-    });
+    }); */
 
     const proxyReq = /^https:/.test(u) ? https.request(u) : http.request(u);
     /* for (const header in req.headers) {
