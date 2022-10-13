@@ -20,6 +20,7 @@ const metaversefilePluginProxy = {
           contents: c,
         };
       } catch(err) {
+        console.warn('error in path', args.path);
         console.warn(err.stack);
         throw err;
       }
