@@ -78,6 +78,7 @@ export default async function handler(req, res) {
       if (!err) {
         const resultBuffer = Buffer.from(resultUint8Array);
         res.setHeader('Content-Type', 'application/javascript');
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
         res.end(resultBuffer);
       } else {
         console.warn(err);
