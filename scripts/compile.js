@@ -1,4 +1,5 @@
 import esbuild from 'esbuild';
+import presetReact from '@babel/preset-react';
 import metaversefilePlugin from '../plugins/rollup.js';
 
 const metaversefilePluginInstance = metaversefilePlugin();
@@ -20,7 +21,7 @@ const metaversefilePluginProxy = {
           contents: c,
         };
       } catch(err) {
-        console.warn('error in path', args.path);
+        console.warn('error in path', args.path, presetReact);
         console.warn(err.stack);
         throw err;
       }
