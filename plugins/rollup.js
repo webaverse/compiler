@@ -467,7 +467,7 @@ export default function metaversefilePlugin() {
         throw new Error(`could not load "${id}"`);
       }
     },
-    async transform(src, id) {
+    /* async transform(src, id) {
       const type = _getType(id);
       const loader = loaders[type];
       const transform = loader?.transform;
@@ -475,6 +475,6 @@ export default function metaversefilePlugin() {
         return await transform(src, id);
       }
       return null;
-    },
+    }, */
   };
 }
