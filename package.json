@@ -27,7 +27,7 @@
     "esbuild": "^0.15.10",
     "mime-types": "^2.1.32",
     "next": "12.3.1",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^3.2.10",
     "pako": "^2.0.4",
     "postcss": "^8.4.17",
     "postcss-modules": "^5.0.0",
