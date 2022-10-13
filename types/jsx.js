@@ -24,7 +24,11 @@ export default {
       id = url.format(o);
 
       const res = await fetch(id);
-      src = await res.text();
+      if (res.ok) {
+        src = await res.text();
+      } else {
+        throw new Error(`invalid status code: ${res.status} "${id}"`);
+      }
     } else if (/^data:/.test(id)) {
       const o = dataUrls(id);
       if (o) {

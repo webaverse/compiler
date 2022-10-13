@@ -40,8 +40,7 @@ export default {
               let s = url.format(o);
               return s;
             } else {
-              console.warn('.metaversefile scheme unknown');
-              return null;
+              throw new Error('.metaversefile scheme unknown');
             }
           };
           const _makeHash = mapped_start_url => {
@@ -69,16 +68,13 @@ export default {
             return u;
           }
         } else {
-          console.warn('.metaversefile has no "start_url": string', {j, id, s});
-          return null;
+          throw new Error('.metaversefile has no "start_url": string', {j, id, s});
         }
       } else {
-        console.warn('.metaversefile could not be parsed: ' + error.stack);
-        return null;
+        throw new Error('.metaversefile could not be parsed: ' + error.stack);
       }
     } else {
-      console.warn('.metaversefile could not be loaded');
-      return null;
+      throw new Error('.metaversefile could not be loaded');
     }
   }
 };

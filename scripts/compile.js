@@ -7,18 +7,38 @@ const metaversefilePluginProxy = {
   name: 'metaversefile',
   setup(build) {
     build.onResolve({filter: /^/}, async args => {
-      const p = await metaversefilePluginInstance.resolveId(args.path, args.importer);
-      return {
-        path: p,
-        namespace: 'metaversefile',
-      };
+      try {
+        const p = await metaversefilePluginInstance.resolveId(args.path, args.importer);
+        return {
+          path: p,
+          namespace: 'metaversefile',
+        };
+      } catch(err) {
+        return {
+          errors: [
+            {
+              text: err.stack,
+            },
+          ],
+        };
+      }
     });
     build.onLoad({filter: /^/}, async args => {
-      let c = await metaversefilePluginInstance.load(args.path);
-      c = c.code;
-      return {
-        contents: c,
-      };
+      try {
+        let c = await metaversefilePluginInstance.load(args.path);
+        c = c.code;
+        return {
+          contents: c,
+        };
+      } catch(err) {
+        return {
+          errors: [
+            {
+              text: err.stack,
+            },
+          ],
+        };
+      }
     });
   },
 };

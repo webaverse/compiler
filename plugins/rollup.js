@@ -273,7 +273,7 @@ export default function metaversefilePlugin() {
 
       const mappedModule = mappedModules[source];
       if (mappedModule) {
-        // console.log('resolve mapped');
+        // console.log('resolve mapped', {source});
         return mappedModule.resolveId(source, importer);
       }
 
@@ -336,7 +336,8 @@ export default function metaversefilePlugin() {
             } else {
               console.warn('unknown IPFS content type:', contentType);
             }
-            // console.log('got content type', source, _getType(source));
+          } else {
+            throw new Error('IPFS content not found: ' + source);
           }
         }
       }
@@ -365,12 +366,17 @@ export default function metaversefilePlugin() {
       if (resolveId) {
         const source2 = await resolveId(source, importer);
         // console.log('resolve rewrite', {type, source, source2});
-        if (source2 !== undefined) {
+        if (source2) {
+          // console.log('resolve loader', {source2});
           return source2;
         }
       }
       // console.log('resolve default', {source});
-      return source;
+      if (source) {
+        return source;
+      } else {
+        throw new Error(`could not resolve "${id}"`);
+      }
     },
     async load(id) {
       // console.log('got load id', {id});
@@ -439,9 +445,13 @@ export default function metaversefilePlugin() {
       // console.log('load 2', {id, type, loader: !!loader, load: !!load});
       
       if (/^https?:\/\//.test(id)) {
-        const res = await fetch(id)
-        const text = await res.text();
-        return text;
+        const res = await fetch(id);
+        if (res.ok) {
+          const text = await res.text();
+          return text;
+        } else {
+          throw new Error(`invalid status code: ${res.status} ${id}`);
+        }
       } else if (match = id.match(dataUrlRegexNoSuffix)) {
         // console.log('load 3', match);
         // const type = match[1];
@@ -454,7 +464,7 @@ export default function metaversefilePlugin() {
           return decodeURIComponent(src);
         }
       } else {
-        return null;
+        throw new Error(`could not load "${id}"`);
       }
     },
     async transform(src, id) {
