@@ -277,11 +277,11 @@ export default function metaversefilePlugin() {
         return mappedModule.resolveId(source, importer);
       }
 
-      // do not resolve node module subpaths
+      /* // do not resolve node module subpaths
       if (/^((?:@[^\/]+\/)?[^\/:\.][^\/:]*)(\/[\s\S]*)$/.test(source)) {
         // console.log('resolve bail');
         return null;
-      }
+      } */
 
       // scripts/compile.js: handle local compile case
       if (/^\.+\//.test(source)) {
