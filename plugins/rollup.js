@@ -293,7 +293,7 @@ export default function metaversefilePlugin() {
           } else {
             const match = importer.match(/^(#[\s\S]*)$/);
             const hash = match ? match[1] : '';
-            const oldSource = source;
+            // const oldSource = source;
             if (/^\//.test(importer)) {
               const fakeBase = 'https://example.com';
               importer = `${fakeBase}${importer}`;
