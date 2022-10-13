@@ -9,7 +9,7 @@ import {getCwd} from '../../util.js'
 import compile from '../../scripts/compile.js'
 
 const _proxy = (req, res, u) => new Promise((resolve, reject) => {
-  console.log('redirect asset 1', {u});
+  // console.log('redirect asset 1', {u});
 
   // res.setHeader('Access-Control-Allow-Origin', '*');
   // res.redirect(u);
