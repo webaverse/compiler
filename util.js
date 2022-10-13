@@ -1,6 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import url from 'url';
+import fetch from 'node-fetch';
 
 export function jsonParse(s) {
   try {
