@@ -4,6 +4,7 @@ import path from 'path';
 import fs from 'fs';
 import http from 'http';
 import https from 'https';
+import etag from 'etag';
 import {getCwd} from '../../util.js'
 import compile from '../../scripts/compile.js'
 
@@ -77,9 +78,18 @@ export default async function handler(req, res) {
       }
       if (!err) {
         const resultBuffer = Buffer.from(resultUint8Array);
-        res.setHeader('Content-Type', 'application/javascript');
-        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
-        res.end(resultBuffer);
+        const et = etag(resultBuffer);
+        res.setHeader('ETag', et);
+        // check if-none-match (multiple)
+        if (req.headers['if-none-match'] && req.headers['if-none-match'].split(',').includes(et)) {
+          res.statusCode = 304;
+          res.end();
+        } else {
+          res.setHeader('Content-Type', 'application/javascript');
+          // res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+          res.setHeader('Cache-Control', 'no-cache');
+          res.end(resultBuffer);
+        }
       } else {
         console.warn(err);
         res.status(500).send(err.stack);
