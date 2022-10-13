@@ -1,5 +1,5 @@
 import esbuild from 'esbuild';
-import '@babel/preset-react';
+import '@babel/preset-react'; // note: needed the esbuild plugin, but will be tree-shaken by next.js if removed here
 import metaversefilePlugin from '../plugins/rollup.js';
 
 const metaversefilePluginInstance = metaversefilePlugin();
