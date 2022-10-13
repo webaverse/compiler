@@ -43,7 +43,7 @@ const _proxy = (req, res, u) => new Promise((resolve, reject) => {
       resolve();
     });
     proxyReq.on('error', err => {
-      console.error(err);
+      console.error(err.stack);
       res.statusCode = 500;
       res.end();
       resolve();
