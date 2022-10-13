@@ -13,11 +13,16 @@ const metaversefilePluginProxy = {
       };
     });
     build.onLoad({filter: /^/}, async args => {
-      let c = await metaversefilePluginInstance.load(args.path);
-      c = c.code;
-      return {
-        contents: c,
-      };
+      try {
+        let c = await metaversefilePluginInstance.load(args.path);
+        c = c.code;
+        return {
+          contents: c,
+        };
+      } catch(err) {
+        console.warn(err.stack);
+        throw err;
+      }
     });
   },
 };
