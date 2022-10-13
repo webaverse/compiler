@@ -5,7 +5,7 @@
   "main": "next dev",
   "type": "module",
   "scripts": {
-    "dev": "BASE_CWD=../.. next dev",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
