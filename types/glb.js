@@ -4,6 +4,7 @@ import {fillTemplate, createRelativeFromAbsolutePath, parseIdHash} from '../util
 
 // const dirname = path.dirname(import.meta.url.replace(/^[a-z]+:\/\//, ''));
 // const templateString = fs.readFileSync(path.join(dirname, '..', 'type_templates', 'glb.js'), 'utf8');
+const templateString = fs.readFileSync(path.resolve('.', 'public', 'type_templates', 'glb.js'), 'utf8');
 
 export default {
   async load(id) {
@@ -16,9 +17,6 @@ export default {
       components,
     } = parseIdHash(id);
 
-    // console.log('parse glb id', {id, contentId, name, description, components});
-
-    const templateString = await fs.promises.readFile(path.resolve('.', 'public', 'type_templates', 'glb.js'), 'utf8');
     const code = fillTemplate(templateString, {
       srcUrl: JSON.stringify(id),
       contentId: JSON.stringify(contentId),

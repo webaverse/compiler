@@ -2,12 +2,11 @@ import path from 'path';
 import fs from 'fs';
 import {fillTemplate, createRelativeFromAbsolutePath, parseIdHash} from '../util.js';
 
-const templateString = fs.readFileSync(path.join(__dirname, '..', 'type_templates', 'fog.js'), 'utf8');
-const cwd = process.cwd();
+// const templateString = fs.readFileSync(path.join(__dirname, '..', 'type_templates', 'fog.js'), 'utf8');
+const templateString = fs.readFileSync(path.resolve('.', 'public', 'type_templates', 'fog.js'), 'utf8');
 
 module.exports = {
   load(id) {
-
     id = createRelativeFromAbsolutePath(id);
 
     const {

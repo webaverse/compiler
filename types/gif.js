@@ -4,10 +4,10 @@ import {fillTemplate, createRelativeFromAbsolutePath, parseIdHash} from '../util
 
 // const dirname = path.dirname(import.meta.url.replace(/^[a-z]+:\/\//, ''));
 // const templateString = fs.readFileSync(path.join(dirname, '..', 'type_templates', 'gif.js'), 'utf8');
+const templateString = fs.readFileSync(path.resolve('.', 'public', 'type_templates', 'gif.js'), 'utf8');
 
 export default {
   async load(id) {
-
     id = createRelativeFromAbsolutePath(id);
 
     const {
@@ -17,7 +17,6 @@ export default {
       components,
     } = parseIdHash(id);
     
-    const templateString = await fs.promises.readFile(path.resolve('.', 'public', 'type_templates', 'gif.js'), 'utf8');
     const code = fillTemplate(templateString, {
       srcUrl: JSON.stringify(id),
       contentId: JSON.stringify(contentId),

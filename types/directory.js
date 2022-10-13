@@ -6,9 +6,9 @@ import metaversefileLoader from './metaversefile.js';
 
 // const dirname = path.dirname(import.meta.url.replace(/^[a-z]+:\/\//, ''));
 // const templateString = fs.readFileSync(path.join(dirname, '..', 'type_templates', 'html.js'));
+const templateString = fs.readFileSync(path.resolve('.', 'public', 'type_templates', 'html.js'), 'utf8');
 
 const _resolveHtml = async (id, importer) => {
-  const templateString = await fs.promises.readFile(path.resolve('.', 'public', 'type_templates', 'html.js'), 'utf8');
   const code = fillTemplate(templateString, {
     srcUrl: JSON.stringify(id),
   });
