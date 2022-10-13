@@ -44,7 +44,7 @@ export default {
         if (res.ok) {
           return indexHtmlPath;
         } else {
-          return null;
+          throw new Error(`directory index.html fetch failed: ${res.status} "${id}"`)
         }
       }
     } else if (/^\//.test(id)) {
@@ -90,14 +90,14 @@ export default {
             return indexHtmlPath;
           } else {
             // console.log('exists 4');
-            return null;
+            throw new Error(`directory index.html does not exist: "${id}"`)
           }
         }
       } else {
-        return null;
+        throw new Error(`not a directory: "${id}"`)
       }
     } else {
-      return null;
+      throw new Error(`unknown path format: "${id}"`)
     }
   },
   async load(id) {
