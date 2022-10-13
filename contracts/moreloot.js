@@ -4,6 +4,7 @@ import {fillTemplate, parseIdHash} from '../util.js';
 
 // const dirname = path.dirname(import.meta.url.replace(/^[a-z]+:\/\//, ''));
 // const templateString = fs.readFileSync(path.join(dirname, '..', 'contract_templates', 'moreloot.js'), 'utf8');
+const templateString = fs.readFileSync(path.resolve('.', 'public', 'contract_templates', 'moreloot.js'), 'utf8');
 
 export default {
   resolveId(source, importer) {
@@ -26,7 +27,6 @@ export default {
         components,
       } = parseIdHash(id);
 
-      const templateString = await fs.promises.readFile(path.resolve('.', 'public', 'contract_templates', 'moreloot.js'), 'utf8');
       const code = fillTemplate(templateString, {
         contractAddress,
         tokenId,
