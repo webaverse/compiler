@@ -4,10 +4,11 @@ import fetch from 'node-fetch';
 import {fillTemplate, createRelativeFromAbsolutePath, getCwd} from '../util.js';
 import metaversefileLoader from './metaversefile.js';
 
-const dirname = path.dirname(import.meta.url.replace(/^[a-z]+:\/\//, ''));
-const templateString = fs.readFileSync(path.join(dirname, '..', 'type_templates', 'html.js'));
+// const dirname = path.dirname(import.meta.url.replace(/^[a-z]+:\/\//, ''));
+// const templateString = fs.readFileSync(path.join(dirname, '..', 'type_templates', 'html.js'));
 
-const _resolveHtml = (id, importer) => {
+const _resolveHtml = async (id, importer) => {
+  const templateString = await fs.promises.readFile(path.resolve('.', 'public', 'type_templates', 'html.js'), 'utf8');
   const code = fillTemplate(templateString, {
     srcUrl: JSON.stringify(id),
   });
@@ -99,12 +100,12 @@ export default {
       return null;
     }
   },
-  load(id) {
+  async load(id) {
     if (id === '/@react-refresh') {
       return null;
     } else {
       id = id.replace(/^\/@proxy\//, '');
-      return _resolveHtml(id);
+      return await _resolveHtml(id);
     }
   }
 };

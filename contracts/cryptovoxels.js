@@ -2,14 +2,14 @@ import path from 'path';
 import fs from 'fs';
 import {fillTemplate, parseIdHash} from '../util.js';
 
-const dirname = path.dirname(import.meta.url.replace(/^[a-z]+:\/\//, ''));
-const templateString = fs.readFileSync(path.join(dirname, '..', 'contract_templates', 'cryptovoxels.js'), 'utf8');
+// const dirname = path.dirname(import.meta.url.replace(/^[a-z]+:\/\//, ''));
+// const templateString = fs.readFileSync(path.join(dirname, '..', 'contract_templates', 'cryptovoxels.js'), 'utf8');
 
 export default {
   resolveId(source, importer) {
     return source;
   },
-  load(id) {
+  async load(id) {
     id = id
       .replace(/^(eth?:\/(?!\/))/, '$1/');
     
@@ -25,6 +25,7 @@ export default {
         components,
       } = parseIdHash(id);
 
+      const templateString = await fs.promises.readFile(path.resolve('.', 'public', 'contract_templates', 'cryptovoxels.js'), 'utf8');
       const code = fillTemplate(templateString, {
         contractAddress,
         tokenId,

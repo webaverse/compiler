@@ -2,12 +2,11 @@ import path from 'path';
 import fs from 'fs';
 import {fillTemplate, createRelativeFromAbsolutePath, parseIdHash} from '../util.js';
 
-const dirname = path.dirname(import.meta.url.replace(/^[a-z]+:\/\//, ''));
-const templateString = fs.readFileSync(path.join(dirname, '..', 'type_templates', 'react.js'), 'utf8');
+// const dirname = path.dirname(import.meta.url.replace(/^[a-z]+:\/\//, ''));
+// const templateString = fs.readFileSync(path.join(dirname, '..', 'type_templates', 'react.js'), 'utf8');
 
 export default {
-  load(id) {
-
+  async load(id) {
     id = createRelativeFromAbsolutePath(id);
 
     const {
@@ -17,6 +16,7 @@ export default {
       components,
     } = parseIdHash(id);
     
+    const templateString = await fs.promises.readFile(path.resolve('.', 'public', 'type_templates', 'react.js'), 'utf8');
     const code = fillTemplate(templateString, {
       srcUrl: JSON.stringify(id),
       contentId: JSON.stringify(contentId),
