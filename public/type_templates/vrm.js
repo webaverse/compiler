@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import metaversefile from 'metaversefile';
-const {useApp, usePhysics, useAvatarRenderer, useCamera, useCleanup, useFrame, useActivate, useLocalPlayer} = metaversefile;
+const {useApp, usePhysics, useAvatarIconer, useAvatarRenderer, useCamera, useCleanup, useFrame, useActivate, useLocalPlayer, useExport} = metaversefile;
 
 const localVector = new THREE.Vector3();
 const localVector2 = new THREE.Vector3();
@@ -142,6 +142,29 @@ export default e => {
       physics.removeGeometry(physicsId);
     }
     physicsIds.length = 0;
+  });
+
+  useExport(async (opts) => {
+    // console.log('use export', JSON.stringify(opts));
+    const {mimeType} = opts;
+    if (mimeType === 'image/png+icon') {
+      // console.log('yes mime type', JSON.stringify({mimeType}));
+      const avatarIconer = useAvatarIconer();
+      const {getDefaultCanvas} = avatarIconer;
+      
+      const canvas = await getDefaultCanvas(srcUrl, 300, 300);
+      let blob;
+      try {
+        blob = await new Promise((accept, reject) => {
+          canvas.toBlob(accept, 'image/png');
+        });
+      } catch(err) {
+        console.warn(err);
+      }
+      return blob;
+    } else {
+      return null;
+    }
   });
 
   return app;
