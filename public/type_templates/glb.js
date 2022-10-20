@@ -412,7 +412,7 @@ export default e => {
       const blob = await videoWriter.complete();
       return blob;
     } else if (mimeType === 'image/png+profile') {
-      const canvas = document.createElement('canvas');
+      const canvas = new OffscreenCanvas(width, height);
       const renderer = new THREE.WebGLRenderer({
         canvas,
         alpha: true,
@@ -456,7 +456,7 @@ export default e => {
       const blob = await canvas.convertToBlob();
       return blob;
     } else if (mimeType === 'image/png+birdseye') {
-        const canvas = document.createElement('canvas');
+        const canvas = new OffscreenCanvas(width, height);
         const renderer = new THREE.WebGLRenderer({
           canvas,
           alpha: true,
