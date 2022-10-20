@@ -353,9 +353,11 @@ export default e => {
       console.log('video 2');
 
       // main canvas
+      const localWidth = parseInt(args.width, 10) || width;
+      const localHeight = parseInt(args.height, 10) || height;
       const canvas = document.createElement('canvas');
-      canvas.width = width;
-      canvas.height = height;
+      canvas.width = localWidth;
+      canvas.height = localHeight;
       const renderer = new THREE.WebGLRenderer({
         canvas,
         alpha: true,
@@ -412,7 +414,9 @@ export default e => {
       const blob = await videoWriter.complete();
       return blob;
     } else if (mimeType === 'image/png+profile') {
-      const canvas = new OffscreenCanvas(width, height);
+      const localWidth = parseInt(args.width, 10) || width;
+      const localHeight = parseInt(args.height, 10) || height;
+      const canvas = new OffscreenCanvas(localWidth, localHeight);
       const renderer = new THREE.WebGLRenderer({
         canvas,
         alpha: true,
