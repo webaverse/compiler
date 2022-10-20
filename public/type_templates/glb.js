@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 import metaversefile from 'metaversefile';
-const {useApp, useFrame, useCleanup, useLocalPlayer, usePhysics, useLoaders, useActivate, useExport} = metaversefile;
+const {useApp, useFrame, useCleanup, useLocalPlayer, usePhysics, useLoaders, useActivate, useExport, useWriters} = metaversefile;
 
 // const wearableScale = 1;
 
@@ -15,7 +15,12 @@ const localMatrix = new THREE.Matrix4(); */
 
 // const z180Quaternion = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI);
 
+//
+
+const FPS = 60;
 const downQuaternion = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI/2);
+
+//
 
 export default e => {
   const app = useApp();
@@ -314,8 +319,100 @@ export default e => {
   });
 
   useExport(async ({mimeType, args}) => {
-    if (mimeType === 'image/png+profile') {
-      const canvas = new OffscreenCanvas(2048, 2048);
+    console.log('got mime type');
+
+    const width = 512;
+    const height = 512;
+
+    if (mimeType === 'image/png+360-video') {
+      const {webmWriter} = useWriters();
+      console.log('got webm writer', webmWriter);
+      
+      // video writer
+      const videoWriter = new webmWriter({
+        quality: 1,
+        fileWriter: null,
+        fd: null,
+        frameDuration: null,
+        frameRate: FPS,
+      });
+
+      console.log('video 1');
+
+      // write canvas
+      // const writeCanvas = document.createElement('canvas');
+      // writeCanvas.width = width;
+      // writeCanvas.height = height;
+      // const writeCtx = writeCanvas.getContext('2d');
+      const _pushFrame = () => {
+        // draw
+        // writeCtx.drawImage(renderer.domElement, 0, 0);
+        videoWriter.addFrame(renderer.domElement);
+      };
+
+      console.log('video 2');
+
+      // main canvas
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const renderer = new THREE.WebGLRenderer({
+        canvas,
+        alpha: true,
+      });
+      renderer.autoClear = false;
+      renderer.sortObjects = false;
+      renderer.physicallyCorrectLights = true;
+      renderer.outputEncoding = THREE.sRGBEncoding;
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      renderer.xr.enabled = true;
+      
+      const scene = new THREE.Scene();
+      scene.autoUpdate = false;
+
+      const ambientLight = new THREE.AmbientLight(0xffffff, 2);
+      scene.add(ambientLight);
+      
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
+      directionalLight.position.set(0, 1, 2);
+      directionalLight.updateMatrixWorld();
+      directionalLight.castShadow = true;
+      directionalLight.shadow.mapSize.width = 2048;
+      directionalLight.shadow.mapSize.height = 2048;
+      directionalLight.shadow.camera.near = 0.5;
+      directionalLight.shadow.camera.far = 500;
+      scene.add(directionalLight);
+      
+      scene.add(app);
+
+      const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
+      camera.position.set(5, 1.6, 5);
+      camera.lookAt(0, 0, 0);
+      camera.updateMatrixWorld();
+
+      console.log('video 3');
+
+      const numAngles = 32;
+      for (let i = 0; i < numAngles; i++) {
+        console.log('render angle', i, numAngles);
+        const angle = i * Math.PI * 2 / numAngles;
+        const x = Math.cos(angle);
+        const z = Math.sin(angle);
+        camera.position.set(x * 5, 1.6, z * 5);
+        camera.lookAt(0, 0, 0);
+        camera.updateMatrixWorld();
+        renderer.clear();
+        renderer.render(scene, camera);
+        _pushFrame();
+      }
+
+      console.log('video 4');
+
+      const blob = await videoWriter.complete();
+      return blob;
+    } else if (mimeType === 'image/png+profile') {
+      const canvas = document.createElement('canvas');
       const renderer = new THREE.WebGLRenderer({
         canvas,
         alpha: true,
@@ -359,7 +456,7 @@ export default e => {
       const blob = await canvas.convertToBlob();
       return blob;
     } else if (mimeType === 'image/png+birdseye') {
-        const canvas = new OffscreenCanvas(2048, 2048);
+        const canvas = document.createElement('canvas');
         const renderer = new THREE.WebGLRenderer({
           canvas,
           alpha: true,
