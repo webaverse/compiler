@@ -456,7 +456,9 @@ export default e => {
       const blob = await canvas.convertToBlob();
       return blob;
     } else if (mimeType === 'image/png+birdseye') {
-        const canvas = new OffscreenCanvas(width, height);
+        const localWidth = parseInt(args.width, 10) || width;
+        const localHeight = parseInt(args.height, 10) || height;
+        const canvas = new OffscreenCanvas(localWidth, localHeight);
         const renderer = new THREE.WebGLRenderer({
           canvas,
           alpha: true,
