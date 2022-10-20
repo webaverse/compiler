@@ -319,7 +319,7 @@ export default e => {
   });
 
   useExport(async ({mimeType, args}) => {
-    console.log('got mime type');
+    console.log('got mime type', JSON.stringify(mimeType), JSON.stringify(args));
 
     const width = 512;
     const height = 512;
