@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 import metaversefile from 'metaversefile';
-const {useApp, useFrame, useCleanup, useLocalPlayer, usePhysics, useLoaders, useActivate, useAvatarInternal, useInternals} = metaversefile;
+const {useApp, useFrame, useCleanup, useLocalPlayer, usePhysics, useLoaders, useActivate, useExport} = metaversefile;
 
 // const wearableScale = 1;
 
@@ -309,6 +309,55 @@ export default e => {
       physics.removeGeometry(physicsId);
     }
     _unwear();
+  });
+
+  useExport(async ({mimeType, args}) => {
+    if (mimeType === 'image/png+profile') {
+      const canvas = new OffscreenCanvas(2048, 2048);
+      const renderer = new THREE.WebGLRenderer({
+        canvas,
+        alpha: true,
+      });
+      renderer.autoClear = false;
+      renderer.sortObjects = false;
+      renderer.physicallyCorrectLights = true;
+      renderer.outputEncoding = THREE.sRGBEncoding;
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      renderer.xr.enabled = true;
+      
+      const scene = new THREE.Scene();
+      scene.autoUpdate = false;
+
+      const ambientLight = new THREE.AmbientLight(0xffffff, 2);
+      scene.add(ambientLight);
+      
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
+      directionalLight.position.set(0, 1, 2);
+      directionalLight.updateMatrixWorld();
+      directionalLight.castShadow = true;
+      directionalLight.shadow.mapSize.width = 2048;
+      directionalLight.shadow.mapSize.height = 2048;
+      directionalLight.shadow.camera.near = 0.5;
+      directionalLight.shadow.camera.far = 500;
+      scene.add(directionalLight);
+      
+      scene.add(app);
+
+      const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
+      camera.position.set(5, 1.6, 5);
+      camera.lookAt(0, 0, 0);
+
+      renderer.setClearColor(0xFF0000, 1);
+      renderer.clear();
+      renderer.render(scene, camera);
+
+      // get the blob
+      const blob = await canvas.convertToBlob();
+      return blob;
+    } else {
+      return null;
+    }
   });
 
   app.stop = () => {
