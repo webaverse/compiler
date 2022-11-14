@@ -257,6 +257,7 @@ export default e => {
     }
   };
   app.addEventListener('wearupdate', e => {
+    const localPlayer = useLocalPlayer();
     if (e.wear) {
       if (app.glb) {
         // const {animations} = app.glb;
@@ -281,11 +282,14 @@ export default e => {
             controllingId: instanceId,
             controllingBone: rideBone,
           };
-          localPlayer.setControlAction(sitAction);
+          // localPlayer.setControlAction(sitAction);
+          localPlayer.blackboard.get('actionKeys').sit = true;
+          localPlayer.blackboard.set('sitAction', sitAction);
         }
       }
     } else {
-      _unwear();
+      localPlayer.blackboard.get('actionKeys').sit = false;
+      _unwear(); // todo: del.
     }
   });
   
