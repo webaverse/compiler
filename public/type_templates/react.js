@@ -1,4 +1,3 @@
-import * as THREE from 'three';
 import metaversefile from 'metaversefile';
 const {useApp, useFrame, useDomRenderer, useInternals, useWear, useCleanup} = metaversefile;
 
@@ -16,21 +15,9 @@ export default e => {
     const json = await res.json();
     let {/*position, quaternion, scale,*/ jsxUrl} = json;
 
-    console.log('srcUrl', srcUrl);
-    console.log('jsxUrl', jsxUrl);
-
-    /* app.setComponent('wear', {
-      boneAttachment: 'head',
-      position,
-      quaternion,
-      scale,
-    }); */
-
     if (/^\\./.test(jsxUrl)) {
       jsxUrl = new URL(jsxUrl, srcUrl).href;
     }
-    // explain the above regex
-    // ^\\. means the string starts with a dot
     
     const m = await import(jsxUrl);
   
