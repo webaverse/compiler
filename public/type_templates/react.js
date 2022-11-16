@@ -2,15 +2,6 @@ import * as THREE from 'three';
 import metaversefile from 'metaversefile';
 const {useApp, useFrame, useDomRenderer, useInternals, useWear, useCleanup} = metaversefile;
 
-let baseUrl = import.meta.url.replace(/(\\/)[^\\/\\\\]*$/, '$1');
-// {
-//   const bu = new URL(baseUrl);
-//   const proxyPrefix ='/@proxy/';
-//   if (bu.pathname.startsWith(proxyPrefix)) {
-//     baseUrl = bu.pathname.slice(proxyPrefix.length) + bu.search + bu.hash;
-//   }
-// }
-
 export default e => {  
   const app = useApp();
   const {sceneLowerPriority} = useInternals();
@@ -25,6 +16,9 @@ export default e => {
     const json = await res.json();
     let {/*position, quaternion, scale,*/ jsxUrl} = json;
 
+    console.log('srcUrl', srcUrl);
+    console.log('jsxUrl', jsxUrl);
+
     /* app.setComponent('wear', {
       boneAttachment: 'head',
       position,
@@ -33,11 +27,11 @@ export default e => {
     }); */
 
     if (/^\\./.test(jsxUrl)) {
-      jsxUrl = new URL(jsxUrl, baseUrl).href;
+      jsxUrl = new URL(jsxUrl, srcUrl).href;
     }
-    // if (/^https?:\\/\\//.test(jsxUrl) && !jsxUrl.startsWith(location.origin)) {
-    //   jsxUrl = '/@proxy/' + jsxUrl;
-    // }
+    // explain the above regex
+    // ^\\. means the string starts with a dot
+    
     const m = await import(jsxUrl);
   
     dom = domRenderEngine.addDom({
