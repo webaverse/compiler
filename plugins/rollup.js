@@ -196,6 +196,8 @@ const mappedModules = {
       return {
         code: `\
           const {React} = globalThis.Metaversefile.exports;
+          const {forwardRef, createContext, createElement, Fragment, Children, isValidElement, cloneElement, memo, Component, useEffect, useState, useRef, useLayoutEffect, useMemo, useCallback, useContext, useReducer, useImperativeHandle, useDebugValue} = React;
+          export {forwardRef, createContext, createElement, Fragment, Children, isValidElement, cloneElement, memo, Component, React, useEffect, useState, useRef, useLayoutEffect, useMemo, useCallback, useContext, useReducer, useImperativeHandle, useDebugValue};
           export default React;
         `,
       };
