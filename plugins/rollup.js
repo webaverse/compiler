@@ -24,6 +24,7 @@ import html from '../types/html.js';
 import scn from '../types/scn.js';
 import light from '../types/light.js';
 import text from '../types/text.js';
+import video from '../types/video.js';
 // import fog from '../types/fog.js';
 // import background from '../types/background.js';
 import rendersettings from '../types/rendersettings.js';
@@ -57,6 +58,8 @@ const loaders = {
   jpg: image,
   jpeg: image,
   svg: image,
+  mp4: video,
+  mov: video,
   gif,
   glbb,
   gltj,
