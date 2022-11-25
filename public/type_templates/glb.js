@@ -249,12 +249,12 @@ export default e => {
   })());
   
   const _unwear = () => {
-    if (sitSpec) {
-      const sitAction = localPlayer.getAction('sit');
-      if (sitAction) {
-        localPlayer.removeAction('sit');
-      }
-    }
+    // if (sitSpec) {
+    //   const sitAction = localPlayer.getAction('sit');
+    //   if (sitAction) {
+    //     localPlayer.removeAction('sit');
+    //   }
+    // }
   };
   app.addEventListener('wearupdate', e => {
     if (e.wear) {
@@ -281,7 +281,10 @@ export default e => {
             controllingId: instanceId,
             controllingBone: rideBone,
           };
-          localPlayer.setControlAction(sitAction);
+          // localPlayer.setControlAction(sitAction);
+          const tickInfos = localPlayer.blackboard.get('tickInfos');
+          tickInfos.needSit = true; // todo: rename: requestSit ?
+          tickInfos.sitAction = sitAction;
         }
       }
     } else {
