@@ -249,12 +249,13 @@ export default e => {
   })());
   
   const _unwear = () => {
-    // if (sitSpec) {
-    //   const sitAction = localPlayer.getAction('sit');
-    //   if (sitAction) {
-    //     localPlayer.removeAction('sit');
-    //   }
-    // }
+    if (sitSpec) {
+      // const sitAction = localPlayer.getAction('sit');
+      // if (sitAction) {
+      //   localPlayer.removeAction('sit');
+      // }
+      localPlayer.blackboard.set('isAfterStartSit', false);
+    }
   };
   app.addEventListener('wearupdate', e => {
     if (e.wear) {
