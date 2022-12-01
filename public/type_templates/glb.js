@@ -254,7 +254,8 @@ export default e => {
       // if (sitAction) {
       //   localPlayer.removeAction('sit');
       // }
-      localPlayer.blackboard.set('isAfterStartSit', false);
+      const tickInfos = localPlayer.blackboard.get('tickInfos');
+      tickInfos.tryStopSit = true;
     }
   };
   app.addEventListener('wearupdate', e => {
