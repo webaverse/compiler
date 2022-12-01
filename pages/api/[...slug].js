@@ -12,7 +12,7 @@ const _proxy = (req, res, u) => new Promise((resolve, reject) => {
   // console.log('redirect asset 1', {u});
 
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+  res.setHeader('Cross-Origin-Opener-Policy', 'unsafe-none');
   res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
   res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
 
