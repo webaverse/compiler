@@ -11,10 +11,10 @@ import compile from '../../scripts/compile.js'
 const _proxy = (req, res, u) => new Promise((resolve, reject) => {
   // console.log('redirect asset 1', {u});
 
-  // res.setHeader('Access-Control-Allow-Origin', '*');
-  // res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
-  // res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
-  // res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Cross-Origin-Opener-Policy', 'unsafe-none');
+  res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
+  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
 
   if (/^\//.test(u)) {
     const cwd = getCwd();
@@ -46,7 +46,7 @@ export default async function handler(req, res) {
     // XXX note: sec-fetch-dest is not supported by Safari
     const dest = req.headers['sec-fetch-dest'];
     // const accept = req.headers['accept'];
-    if (/* /^image\//.test(accept) || */['empty', 'image'].includes(dest)) {
+    if (/* /^image\//.test(accept) || */['empty', 'image'].includes(dest) || dest.includes('github.io')) {
       // console.log('\n\n\n\ncompile', req.headers, req.url, '\n\n\n\n');
       await _proxy(req, res, u);
     } else {
@@ -68,6 +68,10 @@ export default async function handler(req, res) {
           res.setHeader('Content-Type', 'application/javascript');
           // res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
           res.setHeader('Cache-Control', 'no-cache');
+          res.setHeader('Access-Control-Allow-Origin', '*');
+          res.setHeader('Cross-Origin-Opener-Policy', 'unsafe-none');
+          res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
+          res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
           res.end(resultBuffer);
         }
       } else {
