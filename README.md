@@ -1,4 +1,6 @@
-# Totum
+# Webaverse Compiler
+
+Convert any URL into a loadable JS module for the metaverse.
 
 ## Overview
 

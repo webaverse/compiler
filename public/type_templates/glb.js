@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 import metaversefile from 'metaversefile';
-const {useApp, useFrame, useCleanup, useLocalPlayer, usePhysics, useLoaders, useActivate, useAvatarInternal, useInternals} = metaversefile;
+const {useApp, useFrame, useCleanup, useLocalPlayer, usePhysics, useLoaders, useActivate, useExport, useWriters} = metaversefile;
 
 // const wearableScale = 1;
 
@@ -15,6 +15,13 @@ const localMatrix = new THREE.Matrix4(); */
 
 // const z180Quaternion = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI);
 
+//
+
+const FPS = 60;
+const downQuaternion = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI/2);
+
+//
+
 export default e => {
   const app = useApp();
   
@@ -24,6 +31,14 @@ export default e => {
   const srcUrl = ${this.srcUrl};
   for (const {key, value} of components) {
     app.setComponent(key, value);
+  }
+  
+  // * true by default
+  let appHasPhysics = true;
+  const hasPhysicsComponent = app.hasComponent('physics');
+  if (hasPhysicsComponent) {
+    const physicsComponent = app.getComponent('physics');
+    appHasPhysics = physicsComponent;
   }
   
   app.glb = null;
@@ -192,37 +207,15 @@ export default e => {
       app.add(o);
       o.updateMatrixWorld();
       
-      const _addPhysics = async physicsComponent => {
-        let physicsId;
-        switch (physicsComponent.type) {
-          case 'triangleMesh': {
-            physicsId = physics.addGeometry(o);
-            break;
-          }
-          case 'convexMesh': {
-            physicsId = physics.addConvexGeometry(o);
-            break;
-          }
-          default: {
-            physicsId = null;
-            break;
-          }
-        }
-        if (physicsId !== null) {
+      if (appHasPhysics) {
+        const _addPhysics = async () => {
+          const physicsId = physics.addGeometry(o);
           physicsIds.push(physicsId);
-        } else {
-          console.warn('glb unknown physics component', physicsComponent);
-        }
-      };
-      let physicsComponent = app.getComponent('physics');
-      if (physicsComponent) {
-        if (physicsComponent === true) {
-          physicsComponent = {
-            type: 'triangleMesh',
-          };
-        }
-        _addPhysics(physicsComponent);
+        };
+
+        _addPhysics();
       }
+
       o.traverse(o => {
         if (o.isMesh) {
           o.frustumCulled = false;
@@ -309,6 +302,206 @@ export default e => {
       physics.removeGeometry(physicsId);
     }
     _unwear();
+  });
+
+  useExport(async ({mimeType, args}) => {
+    console.log('got mime type', JSON.stringify(mimeType), JSON.stringify(args));
+
+    const width = 512;
+    const height = 512;
+
+    if (mimeType === 'image/png+360-video') {
+      const {webmWriter} = useWriters();
+      console.log('got webm writer', webmWriter);
+      
+      // video writer
+      const videoWriter = new webmWriter({
+        quality: 1,
+        fileWriter: null,
+        fd: null,
+        frameDuration: null,
+        frameRate: FPS,
+      });
+
+      console.log('video 1');
+
+      // write canvas
+      // const writeCanvas = document.createElement('canvas');
+      // writeCanvas.width = width;
+      // writeCanvas.height = height;
+      // const writeCtx = writeCanvas.getContext('2d');
+      const _pushFrame = () => {
+        // draw
+        // writeCtx.drawImage(renderer.domElement, 0, 0);
+        videoWriter.addFrame(renderer.domElement);
+      };
+
+      console.log('video 2');
+
+      // main canvas
+      const localWidth = parseInt(args.width, 10) || width;
+      const localHeight = parseInt(args.height, 10) || height;
+      const canvas = document.createElement('canvas');
+      canvas.width = localWidth;
+      canvas.height = localHeight;
+      const renderer = new THREE.WebGLRenderer({
+        canvas,
+        alpha: true,
+      });
+      renderer.autoClear = false;
+      renderer.sortObjects = false;
+      renderer.physicallyCorrectLights = true;
+      renderer.outputEncoding = THREE.sRGBEncoding;
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      renderer.xr.enabled = true;
+      
+      const scene = new THREE.Scene();
+      scene.autoUpdate = false;
+
+      const ambientLight = new THREE.AmbientLight(0xffffff, 2);
+      scene.add(ambientLight);
+      
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
+      directionalLight.position.set(0, 1, 2);
+      directionalLight.updateMatrixWorld();
+      directionalLight.castShadow = true;
+      directionalLight.shadow.mapSize.width = 2048;
+      directionalLight.shadow.mapSize.height = 2048;
+      directionalLight.shadow.camera.near = 0.5;
+      directionalLight.shadow.camera.far = 500;
+      scene.add(directionalLight);
+      
+      scene.add(app);
+
+      const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
+      camera.position.set(5, 1.6, 5);
+      camera.lookAt(0, 0, 0);
+      camera.updateMatrixWorld();
+
+      console.log('video 3');
+
+      const numAngles = 32;
+      for (let i = 0; i < numAngles; i++) {
+        console.log('render angle', i, numAngles);
+        const angle = i * Math.PI * 2 / numAngles;
+        const x = Math.cos(angle);
+        const z = Math.sin(angle);
+        camera.position.set(x * 5, 1.6, z * 5);
+        camera.lookAt(0, 0, 0);
+        camera.updateMatrixWorld();
+        renderer.clear();
+        renderer.render(scene, camera);
+        _pushFrame();
+      }
+
+      console.log('video 4');
+
+      const blob = await videoWriter.complete();
+      return blob;
+    } else if (mimeType === 'image/png+profile') {
+      const localWidth = parseInt(args.width, 10) || width;
+      const localHeight = parseInt(args.height, 10) || height;
+      const canvas = new OffscreenCanvas(localWidth, localHeight);
+      const renderer = new THREE.WebGLRenderer({
+        canvas,
+        alpha: true,
+      });
+      renderer.autoClear = false;
+      renderer.sortObjects = false;
+      renderer.physicallyCorrectLights = true;
+      renderer.outputEncoding = THREE.sRGBEncoding;
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      renderer.xr.enabled = true;
+      
+      const scene = new THREE.Scene();
+      scene.autoUpdate = false;
+
+      const ambientLight = new THREE.AmbientLight(0xffffff, 2);
+      scene.add(ambientLight);
+      
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
+      directionalLight.position.set(0, 1, 2);
+      directionalLight.updateMatrixWorld();
+      directionalLight.castShadow = true;
+      directionalLight.shadow.mapSize.width = 2048;
+      directionalLight.shadow.mapSize.height = 2048;
+      directionalLight.shadow.camera.near = 0.5;
+      directionalLight.shadow.camera.far = 500;
+      scene.add(directionalLight);
+      
+      scene.add(app);
+
+      const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
+      camera.position.set(5, 1.6, 5);
+      camera.lookAt(0, 0, 0);
+      camera.updateMatrixWorld();
+
+      // renderer.setClearColor(0xFF0000, 1);
+      // renderer.clear();
+      renderer.render(scene, camera);
+
+      // get the blob
+      const blob = await canvas.convertToBlob();
+      return blob;
+    } else if (mimeType === 'image/png+birdseye') {
+      const localWidth = parseInt(args.width, 10) || width;
+      const localHeight = parseInt(args.height, 10) || height;
+      const canvas = new OffscreenCanvas(localWidth, localHeight);
+      const renderer = new THREE.WebGLRenderer({
+        canvas,
+        alpha: true,
+      });
+      renderer.autoClear = false;
+      renderer.sortObjects = false;
+      renderer.physicallyCorrectLights = true;
+      renderer.outputEncoding = THREE.sRGBEncoding;
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      renderer.xr.enabled = true;
+      
+      const scene = new THREE.Scene();
+      scene.autoUpdate = false;
+
+      const ambientLight = new THREE.AmbientLight(0xffffff, 2);
+      scene.add(ambientLight);
+      
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
+      directionalLight.position.set(0, 1, 2);
+      directionalLight.updateMatrixWorld();
+      directionalLight.castShadow = true;
+      directionalLight.shadow.mapSize.width = 2048;
+      directionalLight.shadow.mapSize.height = 2048;
+      directionalLight.shadow.camera.near = 0.5;
+      directionalLight.shadow.camera.far = 500;
+      scene.add(directionalLight);
+      
+      scene.add(app);
+
+      // const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
+      const worldWidth = 40;
+      const worldHeight = 40;
+      const camera = new THREE.OrthographicCamera(
+        worldWidth / - 2, worldWidth / 2,
+        worldHeight / 2, worldHeight / - 2,
+        0.1, 1000
+      );
+      camera.position.set(0, 40, 0);
+      camera.quaternion.copy(downQuaternion);
+      // camera.lookAt(0, 0, 0);
+      camera.updateMatrixWorld();
+
+      renderer.setClearColor(0xFFFFFF, 1);
+      renderer.clear();
+      renderer.render(scene, camera);
+
+      // get the blob
+      const blob = await canvas.convertToBlob();
+      return blob;
+    } else {
+      return null;
+    }
   });
 
   app.stop = () => {

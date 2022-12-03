@@ -11,48 +11,25 @@ import compile from '../../scripts/compile.js'
 const _proxy = (req, res, u) => new Promise((resolve, reject) => {
   // console.log('redirect asset 1', {u});
 
-  // res.setHeader('Access-Control-Allow-Origin', '*');
-  // res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
-  // res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
-  // res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
-  res.redirect(u);
-  return;
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Cross-Origin-Opener-Policy', 'unsafe-none');
+  res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
+  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
 
   if (/^\//.test(u)) {
     const cwd = getCwd();
     u = path.join(cwd, u);
-    /* console.log('redirect asset 2', {
-      u,
-    }); */
+    
+    // console.log('fetch file locally', {cwd, u});
 
     const rs = fs.createReadStream(u);
     rs.pipe(res);
-    rs.on('error', reject);
+    rs.on('error', err => {
+      console.warn('got error', err.stack);
+      reject(err);
+    });
   } else {
-    /* console.log('redirect asset 3', {
-      u,
-    }); */
-
-    const proxyReq = /^https:/.test(u) ? https.request(u) : http.request(u);
-    /* for (const header in req.headers) {
-      proxyReq.setHeader(header, req.headers[header]);
-    } */
-    proxyReq.on('response', proxyRes => {
-      for (const header in proxyRes.headers) {
-        res.setHeader(header, proxyRes.headers[header]);
-      }
-      // res.setHeader('Access-Control-Allow-Origin', '*');
-      res.statusCode = proxyRes.statusCode;
-      proxyRes.pipe(res);
-      resolve();
-    });
-    proxyReq.on('error', err => {
-      console.error(err.stack);
-      res.statusCode = 500;
-      res.end();
-      resolve();
-    });
-    proxyReq.end();
+    res.redirect(u);
   }
 });
 
@@ -63,13 +40,13 @@ export default async function handler(req, res) {
   // console.log('got url', {u: req.url});
 
   const u = req.url
-    .replace(/^\/([a-zA-Z0-9]+:)/, '$1')
-    .replace(/^([a-zA-Z0-9]+:\/(?!\/))/, '$1/');
+    .replace(/^\/([a-zA-Z0-9]+:)/, '$1') // remove initial slash
+    .replace(/^([a-zA-Z0-9]+:\/(?!\/))/, '$1/'); // add second slash to protocol, since it is truncated
   if (u) {
-    // XXX sec-fetch-dest is not supported by Safari
+    // XXX note: sec-fetch-dest is not supported by Safari
     const dest = req.headers['sec-fetch-dest'];
     // const accept = req.headers['accept'];
-    if (/* /^image\//.test(accept) || */['empty', 'image'].includes(dest)) {
+    if (/* /^image\//.test(accept) || */['empty', 'image'].includes(dest) || dest.includes('github.io')) {
       // console.log('\n\n\n\ncompile', req.headers, req.url, '\n\n\n\n');
       await _proxy(req, res, u);
     } else {
@@ -91,6 +68,10 @@ export default async function handler(req, res) {
           res.setHeader('Content-Type', 'application/javascript');
           // res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
           res.setHeader('Cache-Control', 'no-cache');
+          res.setHeader('Access-Control-Allow-Origin', '*');
+          res.setHeader('Cross-Origin-Opener-Policy', 'unsafe-none');
+          res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
+          res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
           res.end(resultBuffer);
         }
       } else {
