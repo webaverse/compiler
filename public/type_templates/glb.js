@@ -285,7 +285,7 @@ export default e => {
           };
           // localPlayer.setControlAction(sitAction);
           const tickInfos = localPlayer.blackboard.get('tickInfos');
-          tickInfos.trySit = true; // todo: rename: requestSit ?
+          tickInfos.trySit = true;
           tickInfos.sitAction = sitAction;
         }
       }
