@@ -33,6 +33,14 @@ export default e => {
     app.setComponent(key, value);
   }
   
+  // * true by default
+  let appHasPhysics = true;
+  const hasPhysicsComponent = app.hasComponent('physics');
+  if (hasPhysicsComponent) {
+    const physicsComponent = app.getComponent('physics');
+    appHasPhysics = physicsComponent;
+  }
+  
   app.glb = null;
   const animationMixers = [];
   const uvScrolls = [];
@@ -199,37 +207,15 @@ export default e => {
       app.add(o);
       o.updateMatrixWorld();
       
-      const _addPhysics = async physicsComponent => {
-        let physicsId;
-        switch (physicsComponent.type) {
-          case 'triangleMesh': {
-            physicsId = physics.addGeometry(o);
-            break;
-          }
-          case 'convexMesh': {
-            physicsId = physics.addConvexGeometry(o);
-            break;
-          }
-          default: {
-            physicsId = null;
-            break;
-          }
-        }
-        if (physicsId !== null) {
+      if (appHasPhysics) {
+        const _addPhysics = async () => {
+          const physicsId = physics.addGeometry(o);
           physicsIds.push(physicsId);
-        } else {
-          console.warn('glb unknown physics component', physicsComponent);
-        }
-      };
-      let physicsComponent = app.getComponent('physics');
-      if (physicsComponent) {
-        if (physicsComponent === true) {
-          physicsComponent = {
-            type: 'triangleMesh',
-          };
-        }
-        _addPhysics(physicsComponent);
+        };
+
+        _addPhysics();
       }
+
       o.traverse(o => {
         if (o.isMesh) {
           o.frustumCulled = false;
