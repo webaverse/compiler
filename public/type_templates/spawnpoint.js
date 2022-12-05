@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import metaversefile from 'metaversefile';
-const {useApp, useLocalPlayer} = metaversefile;
+const {useApp, useLocalPlayer, usePartyManager} = metaversefile;
 
 const localEuler = new THREE.Euler(0, 0, 0, 'YXZ');
 
@@ -47,7 +47,18 @@ export default e => {
             });
           });
         }
-        localPlayer.setSpawnPoint(position, quaternion);
+
+        // position all party members offset to spawnpoint
+        const diff = new THREE.Vector3();
+        const playerPosition = new THREE.Vector3();
+        const partyManager = usePartyManager();
+        const partyMembers = partyManager.getPartyPlayers();
+
+        diff.subVectors(position, localPlayer.position);
+        for (const player of partyMembers) {
+          playerPosition.addVectors(diff, player.position);
+          player.setSpawnPoint(playerPosition, quaternion);
+        }
       }
     })();
   }
