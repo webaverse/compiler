@@ -236,10 +236,6 @@ export default e => {
   
   const _unwear = () => {
     if (sitSpec) {
-      // const sitAction = localPlayer.getAction('sit');
-      // if (sitAction) {
-      //   localPlayer.removeAction('sit');
-      // }
       const tickInfos = localPlayer.blackboard.get('tickInfos');
       tickInfos.tryStopSit = true;
     }
@@ -269,7 +265,6 @@ export default e => {
             controllingId: instanceId,
             controllingBone: rideBone,
           };
-          // localPlayer.setControlAction(sitAction);
           const tickInfos = localPlayer.blackboard.get('tickInfos');
           tickInfos.trySit = true;
           tickInfos.sitAction = sitAction;
