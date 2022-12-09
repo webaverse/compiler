@@ -50,6 +50,7 @@ export default e => {
 
   useCleanup(() => {
     if (dom) {
+      sceneLowerPriority.remove(dom);
       dom.destroy();
     }
   });
