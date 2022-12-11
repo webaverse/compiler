@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import metaversefile from 'metaversefile';
-const {useApp, useLocalPlayer, usePartyManager} = metaversefile;
+const {useApp, useLocalPlayer, usePartyManager, usePlayersManager} = metaversefile;
 
 const localEuler = new THREE.Euler(0, 0, 0, 'YXZ');
 
@@ -52,13 +52,15 @@ export default e => {
         const diff = new THREE.Vector3();
         const playerPosition = new THREE.Vector3();
         const partyManager = usePartyManager();
-        const partyMembers = partyManager.getPartyPlayers();
+        partyManager.addEventListener("defaultPlayerInved", ()=>{
+          const partyMembers = partyManager.getPartyPlayers();
 
-        diff.subVectors(position, localPlayer.position);
-        for (const player of partyMembers) {
-          playerPosition.addVectors(diff, player.position);
-          player.setSpawnPoint(playerPosition, quaternion);
-        }
+          diff.subVectors(position, localPlayer.position);
+          for (const player of partyMembers) {
+            playerPosition.addVectors(diff, player.position);
+            player.setSpawnPoint(playerPosition, quaternion);
+          }
+        });
       }
     })();
   }
