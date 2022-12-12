@@ -52,7 +52,7 @@ export default e => {
         const diff = new THREE.Vector3();
         const playerPosition = new THREE.Vector3();
         const partyManager = usePartyManager();
-        partyManager.addEventListener("defaultPlayerInved", ()=>{
+        partyManager.addEventListener("defaultplayerinvited", ()=>{
           const partyMembers = partyManager.getPartyPlayers();
 
           diff.subVectors(position, localPlayer.position);
