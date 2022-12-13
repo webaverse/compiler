@@ -272,10 +272,7 @@ export default e => {
   
   const _unwear = () => {
     if (sitSpec) {
-      const sitAction = localPlayer.getAction('sit');
-      if (sitAction) {
-        localPlayer.removeAction('sit');
-      }
+      localPlayer.actionsManager.tryRemoveAction('sit');
     }
   };
   app.addEventListener('wearupdate', e => {
@@ -296,14 +293,14 @@ export default e => {
           const localPlayer = useLocalPlayer();
 
           const rideBone = sitSpec.sitBone ? rideMesh.skeleton.bones.find(bone => bone.name === sitSpec.sitBone) : null;
-          const sitAction = {
+          const newSitAction = {
             type: 'sit',
             time: 0,
             animation: sitSpec.subtype,
             controllingId: instanceId,
             controllingBone: rideBone,
           };
-          localPlayer.setControlAction(sitAction);
+          localPlayer.actionsManager.tryAddAction(newSitAction);
         }
       }
     } else {
