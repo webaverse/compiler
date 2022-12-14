@@ -37,6 +37,7 @@ import mob from '../types/mob.js';
 import react from '../types/react.js';
 import group from '../types/group.js';
 import vircadia from '../types/vircadia.js';
+import zine from '../types/zine.js';
 import directory from '../types/directory.js';
 
 // import upath from 'unix-path';
@@ -79,6 +80,7 @@ const loaders = {
   group,
   wind,
   vircadia,
+  zine,
   '': directory,
 };
 

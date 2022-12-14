@@ -46,7 +46,7 @@ export default e => {
   const uvScrolls = [];
   const physicsIds = [];
   app.physicsIds = physicsIds;
-  
+
   // glb state
   let animations;
   
