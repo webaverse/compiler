@@ -35,5 +35,5 @@ export default e => {
 export const contentId = ${this.contentId};
 export const name = ${this.name};
 export const description = ${this.description};
-export const type = 'glbb';
+export const type = 'zine';
 export const components = ${this.components};
