@@ -1,12 +1,10 @@
 // import * as THREE from 'three';
 import metaversefile from 'metaversefile';
-const {useApp, usePhysics, useCameraManager, useStoryCameraManager, useZine} = metaversefile;
+const {useApp, usePhysics, useZine} = metaversefile;
 
 export default e => {
   const app = useApp();
   const physics = usePhysics();
-  const cameraManager = useCameraManager();
-  const storyCameraManager = useStoryCameraManager();
   const zine = useZine();
 
   const srcUrl = ${this.srcUrl};
@@ -26,8 +24,6 @@ export default e => {
     
     app.zineInstance = zineInstance;
     app.physicsIds = zineInstance?.physicsIds ?? [];
-
-    storyCameraManager.setLockCamera(zineInstance.camera);
   })());
 
   return app;
