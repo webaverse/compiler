@@ -1,11 +1,12 @@
 // import * as THREE from 'three';
 import metaversefile from 'metaversefile';
-const {useApp, usePhysics, useCameraManager, useZine} = metaversefile;
+const {useApp, usePhysics, useCameraManager, useStoryCameraManager, useZine} = metaversefile;
 
 export default e => {
   const app = useApp();
   const physics = usePhysics();
   const cameraManager = useCameraManager();
+  const storyCameraManager = useStoryCameraManager();
   const zine = useZine();
 
   const srcUrl = ${this.srcUrl};
@@ -26,15 +27,7 @@ export default e => {
     app.zineInstance = zineInstance;
     app.physicsIds = zineInstance?.physicsIds ?? [];
 
-    // console.log('zine app create wait done', {
-    //   app,
-    //   zineInstance,
-    //   physicsIds: app?.physicsIds?.slice(),
-    //   camera: zineInstance.camera,
-    //   cameraClone: zineInstance.camera.clone(),
-    // });
-
-    cameraManager.setLockCamera(zineInstance.camera);
+    storyCameraManager.setLockCamera(zineInstance.camera);
   })());
 
   return app;
