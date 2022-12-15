@@ -62,8 +62,9 @@ export default e => {
             player.setSpawnPoint(playerPosition, quaternion);
           }
         };
-        if(partyMembers.length === 0)
+        if(partyMembers.length === 0){
           partyManager.addEventListener("defaultplayerinvited", () => {setPartyToSpawnPoint()});
+        }
         else
           setPartyToSpawnPoint();
       }
