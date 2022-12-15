@@ -15,7 +15,7 @@ export default e => {
   e.waitUntil((async () => {
     console.log('zine app inside waitUntil', {app, physics});
 
-    const zineInstance = await zine.createInstanceAsync({
+    const zineInstance = await zine.createStoryboardInstanceAsync({
       start_url: srcUrl,
       physics,
     });
