@@ -52,15 +52,21 @@ export default e => {
         const diff = new THREE.Vector3();
         const playerPosition = new THREE.Vector3();
         const partyManager = usePartyManager();
-        partyManager.addEventListener("defaultplayerinvited", ()=>{
-          const partyMembers = partyManager.getPartyPlayers();
+        let partyMembers = partyManager.getPartyPlayers();
+        const setPartyToSpawnPoint = () => {
+          partyMembers = partyManager.getPartyPlayers();
 
           diff.subVectors(position, localPlayer.position);
           for (const player of partyMembers) {
             playerPosition.addVectors(diff, player.position);
             player.setSpawnPoint(playerPosition, quaternion);
           }
-        });
+        };
+        if(partyMembers.length === 0){
+          partyManager.addEventListener("defaultplayerinvited", () => {setPartyToSpawnPoint()});
+        }
+        else
+          setPartyToSpawnPoint();
       }
     })();
   }
