@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 import metaversefile from 'metaversefile';
-const {useApp, useFrame, useCleanup, useLocalPlayer, usePhysics, useLoaders, useActivate, useExport, useWriters} = metaversefile;
+const {useApp, useFrame, useCleanup, useRenderer, useLocalPlayer, usePhysics, useLoaders, useActivate, useExport, useWriters} = metaversefile;
 
 // const wearableScale = 1;
 
@@ -25,6 +25,8 @@ const downQuaternion = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3
 export default e => {
   const app = useApp();
   
+  const {gltfLoader, exrLoader} = useLoaders();
+  const renderer = useRenderer();
   const physics = usePhysics();
   const localPlayer = useLocalPlayer();
 
@@ -32,15 +34,7 @@ export default e => {
   for (const {key, value} of components) {
     app.setComponent(key, value);
   }
-  
-  // * true by default
-  let appHasPhysics = true;
-  const hasPhysicsComponent = app.hasComponent('physics');
-  if (hasPhysicsComponent) {
-    const physicsComponent = app.getComponent('physics');
-    appHasPhysics = physicsComponent;
-  }
-  
+ 
   app.glb = null;
   const animationMixers = [];
   const uvScrolls = [];
@@ -58,19 +52,30 @@ export default e => {
     let o;
     try {
       o = await new Promise((accept, reject) => {
-        const {gltfLoader} = useLoaders();
         gltfLoader.load(srcUrl, accept, function onprogress() {}, reject);
       });
     } catch(err) {
       console.warn(err);
     }
     // console.log('got o', o);
+
     if (o) {
       app.glb = o;
       const {parser} = o;
       animations = o.animations;
       // console.log('got animations', animations);
       o = o.scene;
+
+      // components
+      const envMapComponent = app.getComponent('envMap');
+
+      // * true by default
+      let appHasPhysics = true;
+      const hasPhysicsComponent = app.hasComponent('physics');
+      if (hasPhysicsComponent) {
+        const physicsComponent = app.getComponent('physics');
+        appHasPhysics = physicsComponent;
+      }
       
       const _addAntialiasing = aaLevel => {
         o.traverse(o => {
@@ -216,11 +221,42 @@ export default e => {
         _addPhysics();
       }
 
+      // env map
+      const pmremGenerator = new THREE.PMREMGenerator(renderer);
+      pmremGenerator.compileEquirectangularShader(); 
+
+      const _loadExr = async path => {
+        let t;
+        try {
+          t = await new Promise((accept, reject) => {
+            exrLoader.load(path, accept, function onprogress() {}, reject);
+          });
+        } catch(err) {
+          console.warn(err);
+        }
+        return t;
+      };
+      const _setupEnvMap = texture => {
+        const exrCubeRenderTarget = pmremGenerator.fromEquirectangular(texture);
+        return exrCubeRenderTarget ? exrCubeRenderTarget.texture : null;
+      };
+      const _addEnvMap = (o, envMap) => {
+        o.material.envMap = envMap;
+        o.material.needsUpdate = true;
+      };
+
+    if(envMapComponent) {
+      const envMapTexture = await Promise.resolve(await _loadExr(envMapComponent));
+      app.envMap = _setupEnvMap(envMapTexture);
+    }
       o.traverse(o => {
         if (o.isMesh) {
           o.frustumCulled = false;
           o.castShadow = true;
           o.receiveShadow = true;
+          if(app.envMap) {
+            _addEnvMap(o, app.envMap);
+          }
         }
       });
       
