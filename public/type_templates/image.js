@@ -27,25 +27,10 @@ export default e => {
     const img = await (async() => {
       for (let i = 0; i < 10; i++) { // hack: give it a few tries, sometimes images fail for some reason
         try {
-          const img = await new Promise((accept, reject) => {
-            const img = new Image();
-            img.onload = () => {
-              accept(img);
-              // startMonetization(instanceId, monetizationPointer, ownerAddress);
-              // _cleanup();
-            };
-            img.onerror = err => {
-              const err2 = new Error('failed to load image: ' + srcUrl + ': ' + err);
-              reject(err2);
-              // _cleanup();
-            }
-            /* const _cleanup = () => {
-              gcFiles && URL.revokeObjectURL(u);
-            }; */
-            img.crossOrigin = 'Anonymous';
-            img.src = srcUrl;
-          });
-          return img;
+          const fetchRes = await fetch(srcUrl);
+          const imgBlob = await fetchRes.blob();
+          const imgBitmap = await createImageBitmap(imgBlob)
+          return imgBitmap;
         } catch(err) {
           console.warn(err);
         }
@@ -54,6 +39,7 @@ export default e => {
     })();
     app.image = img;
     let {width, height} = img;
+
     if (width >= height) {
       height /= width;
       width = 1;
