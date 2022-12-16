@@ -50,8 +50,9 @@ export default e => {
 
      const _addPhysics = () => {
       const {height, width} = app.avatarRenderer.getAvatarSize();
+      const widthPadding = 0.5; // Padding around the avatar since the base width is computed from shoulder distance
 
-      const capsuleRadius = width / 2;
+      const capsuleRadius = (width / 2) + widthPadding;
       const capsuleHalfHeight = height / 2;
 
       const halfAvatarCapsuleHeight = (height + width) / 2; // (full world height of the capsule) / 2
