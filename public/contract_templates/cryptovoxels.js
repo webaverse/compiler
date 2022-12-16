@@ -25,26 +25,37 @@ const _getContent = async (id, hash) => {
 };
 
 const _getTextureMaterial = u => {
-  const img = new Image();
-  img.onload = () => {
-    texture.needsUpdate = true;
-  };
-  img.onerror = err => {
-    console.warn(err);
-  };
-  img.crossOrigin = 'Anonymous';
-  img.src = u;
-  const texture = new THREE.Texture(img);
+
   const material = new THREE.MeshBasicMaterial({
-    map: texture,
     side: THREE.DoubleSide,
     // transparent: true,
   });
   material.polygonOffset = true;
   material.polygonOffsetFactor = -1.0;
   material.polygonOffsetUnits = -4.0;
-  return material;
+
+  (async() => {
+    for (let i = 0; i < 10; i++) { // hack: give it a few tries, sometimes images fail for some reason
+      try {
+        const fetchRes = await fetch(u);
+        const imgBlob = await fetchRes.blob();
+        const imgBitmap = await createImageBitmap(imgBlob)
+
+        const texture = new THREE.Texture();
+        texture.image = imgBitmap;
+        texture.needsUpdate = true;
+        material.map = texture;
+        return material;
+      
+      } catch(err) {
+        console.warn(err);
+      }
+    }
+    throw new Error('failed to load image: ' + u);
+  })();
+
 };
+
 const _getTextureMaterialCached = (() => {
   const cache = {};
   return u => {
@@ -518,16 +529,22 @@ export default () => {
       const transparentGeometry = GenerateField(field, w, h, d, true);
       console.log('got geometries', {solidGeometry, transparentGeometry});
 
-      const img = new Image();
-      img.crossOrigin = 'Anonymous';
-      img.src = tileset;
-      img.onload = () => {
-        texture.needsUpdate = true;
-      };
-      img.onerror = err => {
-        console.warn(err.stack);
-      };
-      const texture = new THREE.Texture(img);
+      const texture = new THREE.Texture();
+      (async() => {
+        for (let i = 0; i < 10; i++) { // hack: give it a few tries, sometimes images fail for some reason
+          try {
+            const fetchRes = await fetch(tileset);
+            const imgBlob = await fetchRes.blob();
+            const imgBitmap = await createImageBitmap(imgBlob)
+            texture.image = imgBitmap;
+            texture.needsUpdate = true;
+            return;
+          } catch(err) {
+            console.warn(err);
+          }
+        }
+        throw new Error('failed to load image: ' + tileset);
+      })();
 
       {
         solidGeometry.computeVertexNormals();
