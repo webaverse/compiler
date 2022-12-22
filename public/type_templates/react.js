@@ -1,12 +1,14 @@
 import metaversefile from 'metaversefile';
-const {useApp, useFrame, useDomRenderer, useInternals, useWear, useCleanup} = metaversefile;
+const {useApp, useFrame, useDomRenderer, useInternals, useWear, useCleanup, useCompilerBaseUrl} = metaversefile;
 
 export default e => {  
   const app = useApp();
   const {sceneLowerPriority} = useInternals();
   const domRenderEngine = useDomRenderer();
+  const compilerBaseUrl = useCompilerBaseUrl()
 
   let srcUrl = ${this.srcUrl};
+  srcUrl = compilerBaseUrl + srcUrl.replace(compilerBaseUrl, '');
   
   let dom = null;
   // const transformMatrix = new THREE.Matrix4();
@@ -14,11 +16,11 @@ export default e => {
     const res = await fetch(srcUrl);
     const json = await res.json();
     let {/*position, quaternion, scale,*/ jsxUrl} = json;
-
+    
     if (/^\\./.test(jsxUrl)) {
       jsxUrl = new URL(jsxUrl, srcUrl).href;
     }
-    
+
     const m = await import(jsxUrl);
   
     dom = domRenderEngine.addDom({
@@ -50,6 +52,7 @@ export default e => {
 
   useCleanup(() => {
     if (dom) {
+      sceneLowerPriority.remove(dom);
       dom.destroy();
     }
   });
