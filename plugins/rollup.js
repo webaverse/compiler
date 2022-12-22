@@ -30,6 +30,7 @@ import video from '../types/video.js';
 import rendersettings from '../types/rendersettings.js';
 import spawnpoint from '../types/spawnpoint.js';
 import wind from '../types/wind.js';
+import item from '../types/item.js';
 import lore from '../types/lore.js';
 import quest from '../types/quest.js';
 import npc from '../types/npc.js';
@@ -72,6 +73,7 @@ const loaders = {
   // background,
   rendersettings,
   spawnpoint,
+  item,
   lore,
   quest,
   npc,
@@ -97,7 +99,7 @@ const _getType = id => {
     }
     let extension;
     let match2;
-    if (match2 = type.match(/^application\/(light|text|rendersettings|spawnpoint|lore|quest|npc|mob|react|group|wind|vircadia)$/)) {
+    if (match2 = type.match(/^application\/(light|text|rendersettings|spawnpoint|item|lore|quest|npc|mob|react|group|wind|vircadia)$/)) {
       extension = match2[1];
     } else if (match2 = type.match(/^application\/(javascript)$/)) {
       extension = 'js';
