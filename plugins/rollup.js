@@ -1,6 +1,6 @@
 import path from 'path';
 import url from 'url';
-import fs from 'fs';
+// import fs from 'fs';
 import mimeTypes from 'mime-types';
 import {createHash} from 'crypto';
 import postcss from 'postcss';
