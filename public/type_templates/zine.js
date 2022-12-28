@@ -9,12 +9,7 @@ export default e => {
 
   const srcUrl = ${this.srcUrl};
   
-  // globalThis.zine = zine;
-  // console.log('zine app init', {srcUrl});
-
   e.waitUntil((async () => {
-    // console.log('zine app inside waitUntil', {app, physics});
-
     const zineInstance = await zine.createStoryboardInstanceAsync({
       start_url: srcUrl,
       physics,
@@ -24,6 +19,8 @@ export default e => {
     
     app.zineInstance = zineInstance;
     app.physicsIds = zineInstance?.physicsIds ?? [];
+
+    await zineInstance.spawn();
   })());
 
   return app;
