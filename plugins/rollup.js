@@ -1,6 +1,6 @@
 import path from 'path';
 import url from 'url';
-import fs from 'fs';
+// import fs from 'fs';
 import mimeTypes from 'mime-types';
 import {createHash} from 'crypto';
 import postcss from 'postcss';
@@ -30,6 +30,7 @@ import video from '../types/video.js';
 import rendersettings from '../types/rendersettings.js';
 import spawnpoint from '../types/spawnpoint.js';
 import wind from '../types/wind.js';
+import item from '../types/item.js';
 import lore from '../types/lore.js';
 import quest from '../types/quest.js';
 import npc from '../types/npc.js';
@@ -37,6 +38,7 @@ import mob from '../types/mob.js';
 import react from '../types/react.js';
 import group from '../types/group.js';
 import vircadia from '../types/vircadia.js';
+import zine from '../types/zine.js';
 import directory from '../types/directory.js';
 
 // import upath from 'unix-path';
@@ -71,6 +73,7 @@ const loaders = {
   // background,
   rendersettings,
   spawnpoint,
+  item,
   lore,
   quest,
   npc,
@@ -79,6 +82,7 @@ const loaders = {
   group,
   wind,
   vircadia,
+  zine,
   '': directory,
 };
 
@@ -95,7 +99,7 @@ const _getType = id => {
     }
     let extension;
     let match2;
-    if (match2 = type.match(/^application\/(light|text|rendersettings|spawnpoint|lore|quest|npc|mob|react|group|wind|vircadia)$/)) {
+    if (match2 = type.match(/^application\/(light|text|rendersettings|spawnpoint|item|lore|quest|npc|mob|react|group|wind|vircadia)$/)) {
       extension = match2[1];
     } else if (match2 = type.match(/^application\/(javascript)$/)) {
       extension = 'js';

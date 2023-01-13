@@ -44,7 +44,7 @@ export default async function handler(req, res) {
     .replace(/^([a-zA-Z0-9]+:\/(?!\/))/, '$1/'); // add second slash to protocol, since it is truncated
   if (u) {
     // XXX note: sec-fetch-dest is not supported by Safari
-    const dest = req.headers['sec-fetch-dest'];
+    const dest = req.headers['sec-fetch-dest'] ?? '';
     // const accept = req.headers['accept'];
     if (/* /^image\//.test(accept) || */['empty', 'image'].includes(dest) || dest.includes('github.io')) {
       // console.log('\n\n\n\ncompile', req.headers, req.url, '\n\n\n\n');

@@ -15,7 +15,7 @@ function getObjectUrl(object) {
     if (typeof content === 'object') {
       content = JSON.stringify(content);
     }
-    u = 'https://local-compiler.wevaverse.com/data:' + type + ',' + encodeURI(content);
+    u = 'https://local-compiler.webaverse.com/data:' + type + ',' + encodeURI(content);
   } else {
     throw new Error('invalid scene object: ' + JSON.stringify(object));
   }
